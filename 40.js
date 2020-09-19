@@ -4,4 +4,3 @@ firebase.analytics()
 
 import {HbGithub} from "./hb-github.mjs"
 customElements.define("hb-github", HbGithub)
-

@@ -36,23 +36,27 @@ export class HbGithub extends HTMLElement{
         this.attachShadow({mode: "open"})
         this.shadowRoot.appendChild(template.content.cloneNode(true))
 
+        this.a = this.querySelector("a")
         this.img = this.querySelector("img")
         this.span = this.querySelector("span")
-        this.loginButton = this.querySelector("button:nth-child(3)")
-        this.logoutButton = this.querySelector("button:nth-child(4)")
+        this.loginButton = this.querySelector("button:nth-child(4)")
+        this.logoutButton = this.querySelector("button:nth-child(5)")
 
         this.login = this.login.bind(this)
         this.logout = this.logout.bind(this)
     }
 
     connectedCallback() {    
+        this.a.href = this.getAttribute("success-page")
         this.loginButton.addEventListener("click", this.login)
         this.logoutButton.addEventListener("click", this.logout)
 
         window.firebase.auth().onAuthStateChanged(user => {
+            this.a.style.display = "none"
             this.loginButton.style.display = "none"
             this.logoutButton.style.display = "none"
             if (user) {
+                if (window.location.pathname !== "/40.html") this.a.style.display = "inline"
                 this.logoutButton.style.display = "inline"
                 this.showProfile(user.providerData[0])
             } else {
