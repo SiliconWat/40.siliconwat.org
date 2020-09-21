@@ -56,13 +56,14 @@ export class HbGithub extends HTMLElement{
             this.loginButton.style.display = "none"
             this.logoutButton.style.display = "none"
             if (user) {
-                if (window.location.pathname !== "/40.html") this.a.style.display = "inline"
+                if (window.location.pathname !== this.getAttribute("success-page")) this.a.style.display = "inline"
                 this.logoutButton.style.display = "inline"
                 this.showProfile(user.providerData[0])
             } else {
                 this.loginButton.style.display = "inline"
                 this.hideProfile()
             }
+            this.checkSponsorship()
         })
 
         window.firebase.auth().getRedirectResult()
@@ -70,9 +71,11 @@ export class HbGithub extends HTMLElement{
         .then(response => response.json())
         .then(json => {
             //console.log(json.data.viewer.sponsorshipsAsSponsor.nodes)
-            if (json.data.viewer.sponsorshipsAsSponsor.nodes.some(sponorships => sponorships.tier.id === "MDEyOlNwb25zb3JzVGllcjQxODk1")) {
+            if (json.data.viewer.sponsorshipsAsSponsor.nodes.some(sponorships => sponorships.tier.id === this.getAttribute("tier-id"))) {
+                localStorage.setItem("isSponsor", true)
                 window.location.href = this.getAttribute("success-page")
             } else {
+                localStorage.setItem("isSponsor", false)
                 this.querySelector("p").textContent = "Please donate to see 40..."
             }
         })
@@ -89,6 +92,7 @@ export class HbGithub extends HTMLElement{
 
     logout(event) {
         this.logoutButton.disabled = true
+        localStorage.setItem("isSponsor", false)
 
         window.firebase.auth().signOut()
         .then(() => window.location.href = this.getAttribute("login-page"))
@@ -104,5 +108,11 @@ export class HbGithub extends HTMLElement{
     hideProfile() {
         this.img.style.display = "none"
         this.span.textContent = ""
+    }
+
+    checkSponsorship() {
+        this.dispatchEvent(new CustomEvent("sponsorship", {detail: {isSponsor: Boolean(localStorage.getItem("isSponsor"))}}))
+        if (window.location.pathname === this.getAttribute("success-page") && localStorage.getItem("isSponsor") === "false")
+            window.location.href = this.getAttribute("login-page")
     }
 }
