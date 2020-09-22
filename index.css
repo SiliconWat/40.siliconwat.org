@@ -1,0 +1,38 @@
+body {
+    margin: 0;
+}
+
+header {
+    background-color: aquamarine;
+    height: 10vh;
+    display: flex;
+    flex-direction: row;
+}
+
+main {
+    background-color: burlywood;
+    display: flex;
+    flex-direction: row;
+    height: 80vh;
+}
+
+section {
+    border: 1px dashed black;
+    width: 50vw;
+}
+
+footer {
+    background-color: darkcyan;
+    height: 10vh;
+}
+
+@media (max-width: 480px) {
+    main {
+        flex-direction: column;
+    }
+
+    section {
+        width: 100vw;
+        height: 40vh;
+    }
+}
